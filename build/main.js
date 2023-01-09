@@ -103,7 +103,6 @@ function fillGrid(code) {
 
 function loadMap() {
   const map = currentMap;
-  console.log(map);
   if (!map) return;
   mapNameInfo.innerText = map.name;
   width = map.width;
@@ -166,8 +165,6 @@ mapLoadButton.addEventListener("click", async (e) => {
     mapsModal.innerHTML = "";
     let maps = await MapService.getAll();
     maps.forEach(map => {
-      console.log("Map in forEach:", map);
-      console.log(map.code);
       const mapCard = document.createElement("div");
       const mapName = document.createElement("div");
       const mapImg = document.createElement("img");
