@@ -20,7 +20,19 @@ mapRouter.post("/", async (req, res) => {
 
   const savedMap = await map.save();
 
-  res.status(201);
+  return res.status(201).json(savedMap);
+});
+
+mapRouter.delete("/:id", async (req, res, next) => {
+  try {
+    await Map.findByIdAndDelete(req.params.id);
+    return res.status(204).end();
+  }
+  catch (err) {
+    console.log(err);
+    res.status(400);
+    next(err);
+  }
 });
 
 module.exports = mapRouter;

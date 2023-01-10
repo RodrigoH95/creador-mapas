@@ -40,6 +40,7 @@ for (let i = 0; i <= TILEAMOUNT; i++) {
   btn.type = "button";
   btn.id = `tile-${i}`;
   const img = document.createElement("img");
+  img.classList.add("btn-img");
   img.src = `./assets/img/${i}.png`;
   btn.appendChild(img);
   paletteButtons.appendChild(btn);
@@ -80,7 +81,7 @@ async function generateMap(name) {
   map.width = width;
   map.height = height;
   map.code = [...images].map((img) => getTileCode(img)).join("-");
-  const mapURL = await html2canvas(gridContainer);
+  const mapURL = await html2canvas(gridContainer, {logging:false});
   map.img = mapURL.toDataURL();
   return map;
 }
@@ -157,31 +158,46 @@ mapCodeButton.addEventListener("click", async (e) => {
   if (!name) return;
   mapNameInfo.innerText = name;
   const map = await generateMap(name);
-  MapService.createMap(map);
-  localStorage.setItem("map", JSON.stringify(map));
+  await MapService.createMap(map);
+  showMaps();
 });
 
-mapLoadButton.addEventListener("click", async (e) => {
-    mapsModal.innerHTML = "";
-    let maps = await MapService.getAll();
-    maps.forEach(map => {
-      const mapCard = document.createElement("div");
-      const mapName = document.createElement("div");
-      const mapImg = document.createElement("img");
-      mapImg.src = map.img;
-      mapImg.style.width = "200px";
-      mapImg.style.height = "200px";
-      mapName.innerText = map.name;
-      mapCard.appendChild(mapName);
-      mapCard.appendChild(mapImg);
-      mapCard.onclick = () => {
-        currentMap = map;
-        loadMap();
-      };
-      mapsModal.appendChild(mapCard);
-    });
-    ;
+mapLoadButton.addEventListener("click", (e) => {
+  showMaps();
 });
+
+async function showMaps() {
+  let maps = await MapService.getAll();
+  mapsModal.innerHTML = "";
+  maps.forEach((map) => {
+    const mapCard = createCard(map);
+    mapsModal.appendChild(mapCard);
+  });
+}
+
+function createCard(map) {
+  const card = document.createElement("div");
+  const name = document.createElement("div");
+  const img = document.createElement("img");
+  const btn = document.createElement("button");
+  card.classList.add("map-card");
+  img.classList.add("map-img");
+  btn.innerText = "Eliminar";
+  img.src = map.img;
+  img.style.width = "180px";
+  img.style.height = "180px";
+  name.innerText = map.name;
+  card.appendChild(name);
+  card.appendChild(img);
+  card.appendChild(btn);
+  btn.onclick = () => MapService.delete(map.id).then(() => showMaps());
+  img.onclick = () => {
+    currentMap = map;
+    loadMap();
+  };
+  
+  return card;
+}
 
 toggleGridButton.addEventListener("click", () => {
   toggleGrid();
