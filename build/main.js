@@ -33,7 +33,7 @@ function calculateVariables() {
 
 calculateVariables();
 
-const TILEAMOUNT = 26; // Reemplazar por la cantidad de imagenes en la carpeta ./assets/img | Sirve para generar los botones de materiales
+const TILEAMOUNT = 36; // Reemplazar por la cantidad de imagenes en la carpeta ./assets/img | Sirve para generar los botones de materiales
 
 for (let i = 0; i <= TILEAMOUNT; i++) {
   const btn = document.createElement("button");
